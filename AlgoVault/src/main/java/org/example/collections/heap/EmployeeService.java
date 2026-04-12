@@ -1,4 +1,4 @@
-package org.example.collections.array.heap;
+package org.example.collections.heap;
 
 import java.util.*;
 
