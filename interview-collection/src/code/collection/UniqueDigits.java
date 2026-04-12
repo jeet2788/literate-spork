@@ -28,7 +28,7 @@ public class UniqueDigits {
     }
 
     private boolean hasUniqueDigits(int num) {
-        boolean[] seen = new boolean[10];
+        boolean[] seen = new boolean[10]; // This is because numbers can be oly from 0-9
 
         while (num > 0) {
             int digit = num % 10;
