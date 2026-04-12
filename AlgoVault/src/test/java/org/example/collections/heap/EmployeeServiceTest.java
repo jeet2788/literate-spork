@@ -1,7 +1,5 @@
-package collections.heap;
+package org.example.collections.heap;
 
-import org.example.collections.heap.Employee;
-import org.example.collections.heap.EmployeeService;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
