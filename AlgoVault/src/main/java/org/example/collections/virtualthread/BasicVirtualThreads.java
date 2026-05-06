@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 /**
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
  *
  * Key Improvements:
  * - Uses CountDownLatch for proper thread synchronization
+ * - Uses AtomicInteger to ensure threads start in sequential order
  * - Provides clear, step-by-step console output
  * - Explains what's happening at each stage
  * - Demonstrates the efficiency of virtual threads
@@ -24,6 +26,7 @@ public class BasicVirtualThreads {
      * It creates 10 virtual threads, each named "vt-i" where i is the index,
      * and each thread sleeps for 1 second before printing a completion message.
      * Uses CountDownLatch to ensure all threads complete before measuring total time.
+     * Uses AtomicInteger to ensure ordered startup messages (vt-0, vt-1, vt-2, ...).
      *
      * @param args command-line arguments (not used)
      * @throws InterruptedException if the thread is interrupted
@@ -35,6 +38,7 @@ public class BasicVirtualThreads {
 
         final int numberOfThreads = 10;
         final CountDownLatch latch = new CountDownLatch(numberOfThreads);
+        final AtomicInteger startOrder = new AtomicInteger(0);
         List<Thread> threads = new ArrayList<>();
 
         System.out.println("📌 STEP 1: Creating " + numberOfThreads + " virtual threads...\n");
@@ -47,8 +51,17 @@ public class BasicVirtualThreads {
                 .name("vt-" + i)
                 .start(() -> {
                     try {
+                        // Wait for our turn to print the "Started" message
+                        while (startOrder.get() != i) {
+                            Thread.yield();
+                        }
+
                         System.out.printf("  ➤ [%s] Started - sleeping for 1 second%n",
                             Thread.currentThread().getName());
+
+                        // Increment to let the next thread print
+                        startOrder.incrementAndGet();
+
                         Thread.sleep(Duration.ofSeconds(1));
                         System.out.printf("  ✓ [%s] Completed%n",
                             Thread.currentThread().getName());
